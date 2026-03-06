@@ -1,10 +1,20 @@
-
 // SPDX-License-Identifier: MIT
-// Compatible with OpenZeppelin Contracts ^5.4.0
-pragma solidity ^0.8.27;
+pragma solidity ^0.8.20;
 
-import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Snapshot.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract DEr is ERC721 {
-    constructor() ERC721("DEr", "MTK") {}
+contract SnapshotToken is ERC20, ERC20Snapshot, Ownable {
+    constructor() ERC20("SnapshotToken", "SNAP") Ownable(msg.sender) {
+        _mint(msg.sender, 1000000 * 10 ** decimals());
+    }
+
+    function snapshot() public onlyOwner {
+        _snapshot();
+    }
+
+    function _update(address from, address to, uint256 value) internal override(ERC20, ERC20Snapshot) {
+        super._update(from, to, value);
+    }
 }
